@@ -14,6 +14,7 @@ const sass = require("gulp-sass");
 const uglify = require("gulp-uglify");
 const jsonminify = require('gulp-jsonminify');
 const concat = require('gulp-concat');
+const Parser = require('rss-parser');
 
 // Load package.json for banner
 const pkg = require('./package.json');
@@ -137,6 +138,22 @@ function watchFiles() {
   gulp.watch("./**/*.html", browserSyncReload);
 }
 
+/*
+* Parse RSS feed
+* @see https://www.npmjs.com/package/rss-parser
+*/
+async function parseRss(){
+  (async () => {
+    let parser = new Parser();
+    let feed = await parser.parseURL('https://www.reddit.com/.rss');
+    console.log(feed.title);
+
+    feed.items.forEach(item => {
+      console.log(item.title + ':' + item.link)
+    });
+  })();
+}
+
 // Define complex tasks
 const vendor = gulp.series(clean, modules);
 const build = gulp.series(vendor, gulp.parallel(css, js, json));
@@ -150,4 +167,5 @@ exports.clean = clean;
 exports.vendor = vendor;
 exports.build = build;
 exports.watch = watch;
+exports.rss = parseRss;
 exports.default = build;
