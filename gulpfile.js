@@ -145,7 +145,7 @@ function watchFiles() {
 async function parseRss(){
   (async () => {
     let parser = new Parser();
-    let feed = await parser.parseURL('https://www.reddit.com/.rss');
+    let feed = await parser.parseURL(pkg.blogs.medium.feed);
     console.log(feed.title);
 
     feed.items.forEach(item => {

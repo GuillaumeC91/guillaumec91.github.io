@@ -20,6 +20,13 @@
         "url": "https://github.com/guillaumecleme/guillaumecleme.github.io/issues",
         "email": "guillaumecle.me@gmail.com"
     },
+    "blogs": {
+        "medium": {
+            "user": "@guillaumecleme",
+            "url": "https://medium.com",
+            "feed": "https://medium.com/feed/@guillaumecleme"
+        }
+    },
     "license": "MIT",
     "author": "Guillaume Clement",
     "contributors": [
