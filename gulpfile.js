@@ -139,11 +139,13 @@ function watchFiles() {
   gulp.watch("./**/*.html", browserSyncReload);
 }
 
-/*
-* Parse RSS feed
+/**
+* Parse RSS feed and template content using handlebars
+*
+* @see https://www.npmjs.com/package/gulp-compile-handlebars
 * @see https://www.npmjs.com/package/rss-parser
 */
-async function parseRss(){
+async function templates(){
   (async () => {
     let parser = new Parser();
     let feed = await parser.parseURL(pkg.blogs.medium.feed);
@@ -151,24 +153,17 @@ async function parseRss(){
 
     feed.items.forEach(item => {
       console.log(item.title + ':' + item.link)
+
+      var postName = item.link
+        .substring(0, item.link.indexOf("?"))
+        .replace(pkg.blogs.medium.url + "/" + pkg.blogs.medium.user + "/", "");
+
+      gulp.src('templates/post.hbs')
+          .pipe(handlebars(item, {}))
+          .pipe(rename(postName + '.html'))
+          .pipe(gulp.dest('posts'));
     });
   })();
-}
-
-/**
-* @see https://www.npmjs.com/package/gulp-compile-handlebars
-*/
-function templates(){
-  var templateData = {
-          feed: {
-            title: "bob"
-          }
-      };
-
-      return gulp.src('templates/*.hbs')
-          .pipe(handlebars(templateData, {}))
-          .pipe(rename(templateData.feed.title + '.html'))
-          .pipe(gulp.dest('posts'));
 }
 
 // Clean vendor
@@ -190,6 +185,5 @@ exports.clean = clean;
 exports.vendor = vendor;
 exports.build = build;
 exports.watch = watch;
-exports.rss = parseRss;
 exports.blog = blog;
 exports.default = build;
