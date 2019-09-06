@@ -15,6 +15,7 @@ const uglify = require("gulp-uglify");
 const jsonminify = require('gulp-jsonminify');
 const concat = require('gulp-concat');
 const Parser = require('rss-parser');
+var handlebars = require('gulp-compile-handlebars');
 
 // Load package.json for banner
 const pkg = require('./package.json');
@@ -154,10 +155,32 @@ async function parseRss(){
   })();
 }
 
+/**
+* @see https://www.npmjs.com/package/gulp-compile-handlebars
+*/
+function templates(){
+  var templateData = {
+          feed: {
+            title: "bob"
+          }
+      };
+
+      return gulp.src('templates/*.hbs')
+          .pipe(handlebars(templateData, {}))
+          .pipe(rename(templateData.feed.title + '.html'))
+          .pipe(gulp.dest('posts'));
+}
+
+// Clean vendor
+function cleanPosts() {
+  return del(["./posts/"]);
+}
+
 // Define complex tasks
 const vendor = gulp.series(clean, modules);
 const build = gulp.series(vendor, gulp.parallel(css, js, json));
 const watch = gulp.series(build, gulp.parallel(watchFiles, browserSync));
+const blog = gulp.series(cleanPosts, templates);
 
 // Export tasks
 exports.css = css;
@@ -168,4 +191,5 @@ exports.vendor = vendor;
 exports.build = build;
 exports.watch = watch;
 exports.rss = parseRss;
+exports.blog = blog;
 exports.default = build;
