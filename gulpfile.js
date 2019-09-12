@@ -15,7 +15,8 @@ const uglify = require("gulp-uglify");
 const jsonminify = require('gulp-jsonminify');
 const concat = require('gulp-concat');
 const Parser = require('rss-parser');
-var handlebars = require('gulp-compile-handlebars');
+const handlebars = require('gulp-compile-handlebars');
+const unescapeHtml = require('gulp-unescape-html')
 
 // Load package.json for banner
 const pkg = require('./package.json');
@@ -160,6 +161,7 @@ async function templates(){
 
       gulp.src('templates/post.hbs')
           .pipe(handlebars(item, {}))
+          .pipe(unescapeHtml())
           .pipe(rename(postName + '.html'))
           .pipe(gulp.dest('posts'));
     });
